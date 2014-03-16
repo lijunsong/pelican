@@ -3,8 +3,13 @@
 
 <h1>Categories</h1>
 <ul>
-{% for cat in categories %}
-    <li>{{cat}}</li>
+{% for cat, articles in categories %}
+    <li>{{cat.name}}</li>
+    <ul>
+    {% for article in articles %}
+        <li>{{article.title}}</li>
+    {% endfor %}
+    </ul>
 {% endfor %}
 </ul>
 
