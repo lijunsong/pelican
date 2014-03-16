@@ -1,0 +1,17 @@
+<!doctype html>
+<title> Edit File</title>
+
+<h1>Edit {{article.title}}</h1>
+<div style="width=45%; float: left">
+    <form id="origin" method=POST>
+        <textarea row=30 col=80 form="origin" name="editarea">{{origin}}</textarea>
+        <input type="submit" id="modify_origin" name="update" value="update">
+    </form>
+</div>
+<div style="width=45%; float: right">
+    <div>
+    {{article.content | safe}}
+    </div>
+</div>
+
+</html>

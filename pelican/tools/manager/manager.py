@@ -1,5 +1,6 @@
 from flask import Flask
 from flask import render_template
+from flask import request
 import os
 import sys
 
@@ -20,12 +21,47 @@ PORT = 8000
 
 logger = logging.getLogger(__name__)
 
-categories = None
+articles_generator = None
+
+
+@app.template_filter('basename')
+def get_basename(s):
+    return os.path.basename(s)
 
 @app.route('/')
 def list_all_categories():
-    global categories
-    return render_template("list_categories.html", categories=categories)
+    global articles_generator
+    return render_template("list_categories.html", 
+                           categories=articles_generator.categories)
+
+@app.route('/preview/<filename>')
+def preview(filename):
+    global articles_generator
+    articles = articles_generator.articles
+    for article in articles:
+        if os.path.basename(article.filename) == filename:
+            return article.content
+    return "Not Found"
+    
+@app.route('/edit/<filename>', methods=['GET', 'POST'])
+def edit(filename):
+    global articles_generator
+    articles = articles_generator.articles
+    for article in articles:
+        if os.path.basename(article.source_path) == filename:
+            with open(article.source_path) as f:
+                origin = unicode(f.read(), "utf8")
+            break
+
+    if request.method == 'POST':
+        updated_content = request.form['editarea'].replace(u'\r\n', u'\n')
+        if updated_content != origin:
+            with open(article.source_path, 'w') as f:
+                f.write(updated_content.encode('UTF-8'))
+                origin = updated_content
+                #TODO: UPDATE: article.content 
+
+    return render_template("edit_file.html", origin=origin, article=article)
 
 class UserSettings:
     def __init__(self, config_file, inputdir):
@@ -33,9 +69,7 @@ class UserSettings:
         self.inputdir = os.path.abspath(os.path.expanduser(inputdir))
         self.settings = read_settings(self.config_file)
         self.settings['PATH'] = self.inputdir
-        self.cats, self.files = self._nest_dir_list(inputdir)
 
-    #TODO: store static file and articles
     def _nest_dir_list(self, directory):
         dirs = []
         files = []
@@ -53,10 +87,8 @@ sys.argv.append("~/git/homepage/configure/notes_conf_local.py")
 sys.argv.append("~/git/homepage/notes")
 
 def main():
-    global categories
+    global articles_generator
     articles_generator = get_articles_info()
-    categories = articles_generator.categories
-    print categories
     app.run(host=HOST, port=PORT)
     
 
@@ -65,7 +97,6 @@ def get_articles_info():
         print "usage: pelican-manager settings inputdir"
         sys.exit(1)
     user_settings = UserSettings(sys.argv[1], sys.argv[2])
-# TODO: construct cat->files dict. write template show category name and files in that category    
     cls = user_settings.settings['PELICAN_CLASS']
     if isinstance(cls, six.string_types):
         module, cls_name = cls.rsplit('.', 1)
@@ -96,14 +127,11 @@ def get_articles_info():
         if hasattr(p, 'generate_output'):
             p.generate_output(writer)
     """
+    global articles_generator
     articles_generator = next(g for g in generators
                               if isinstance(g, ArticlesGenerator))
 
     return articles_generator
-
-
-
-#app.run(host=HOST, port=PORT)
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
