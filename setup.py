@@ -2,14 +2,15 @@
 from setuptools import setup
 
 requires = ['feedgenerator >= 1.6', 'jinja2 >= 2.7', 'pygments', 'docutils',
-            'pytz >= 0a', 'blinker', 'unidecode', 'six']
+            'pytz >= 0a', 'blinker', 'unidecode', 'six', 'flask']
 
 entry_points = {
     'console_scripts': [
         'pelican = pelican:main',
         'pelican-import = pelican.tools.pelican_import:main',
         'pelican-quickstart = pelican.tools.pelican_quickstart:main',
-        'pelican-themes = pelican.tools.pelican_themes:main'
+        'pelican-themes = pelican.tools.pelican_themes:main',
+        'pelican-manager = pelican.tools.manager.manager:main'
     ]
 }
 
