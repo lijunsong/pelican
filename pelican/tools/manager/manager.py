@@ -31,20 +31,29 @@ def get_basename(s):
 @app.route('/')
 def list_all_categories():
     global articles_generator
-    return render_template("list_categories.html", 
-                           categories=articles_generator.categories)
+    return render_template("index.html", 
+                           articles=articles_generator.dates,
+                           categories=articles_generator.categories,
+                           tags=articles_generator.tags)
 
+"""
 @app.route('/preview/<filename>')
 def preview(filename):
+    # TODO: check the writer. Writer should be the one construct the entire page from jinja template.
     global articles_generator
     articles = articles_generator.articles
     for article in articles:
         if os.path.basename(article.filename) == filename:
-            return article.content
-    return "Not Found"
+            with open(article.source_path) as f:
+                origin = unicode(f.read(), "utf8")
+            break
+
+    return render_template("preview_file.html",
+                           article=article, origin=origin)
+"""
     
-@app.route('/edit/<filename>', methods=['GET', 'POST'])
-def edit(filename):
+@app.route('/preview/<filename>', methods=['GET', 'POST'])
+def preview(filename):
     global articles_generator
     articles = articles_generator.articles
     for article in articles:
@@ -61,7 +70,7 @@ def edit(filename):
                 origin = updated_content
                 #TODO: UPDATE: article.content 
 
-    return render_template("edit_file.html", origin=origin, article=article)
+    return render_template("preview_file.html", origin=origin, article=article)
 
 class UserSettings:
     def __init__(self, config_file, inputdir):

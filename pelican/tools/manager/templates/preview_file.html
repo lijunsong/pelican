@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Preview {{article.title}}{% endblock %}
+
+
+{% block container %}
+<!-- Modal -->
+<div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Edit {{article.title}}</h4>
+      </div>
+     <form id="origin" method="POST">
+      <div class="modal-body">
+        <textarea class="form-control" rows=20 name="editarea">{{origin}}</textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<h1>{{article.title}}</h1>
+<div class="article-date">{{article.date}}</div>
+<div class="article-tags">{{article.tags | join(", ")}}</div>
+<div class="article-category">{{article.category}}</div>
+<button class="btn btn-primary" data-toggle="modal" data-target="#edit" data-backdrop='static'>Edit</button>
+
+<div class="article-contents">
+    {{article.content | safe}}
+</div>
+
+{% endblock %}
+

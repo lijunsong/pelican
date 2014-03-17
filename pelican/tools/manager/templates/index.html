@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}
+Pelican Manager
+{% endblock %}
+
+
+{% block container %}
+<h1>Articles</h1>
+
+<table class="table table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Tags</th>
+            <th>Categories</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for article in articles %}
+        <tr>
+            <th><a href="/preview/{{article.filename | basename}}">{{article.title}}</a></th>
+            <th>{% for tag in article.tags %}<a href="/tags/{{tag.name}}">{{tag.name}}</a>{% if not loop.last %}, {%endif%}{%endfor%}
+            <th><a href="/cats/{{article.category.name}}">{{article.category.name}}</a></th>
+            <th>{{article.date}}</th>
+        <tr>
+    {% endfor %}
+    </tbody>
+
+</table>
+
+{% endblock %}

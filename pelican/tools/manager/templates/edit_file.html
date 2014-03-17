@@ -1,17 +1,20 @@
-<!doctype html>
-<title> Edit File</title>
+{% extends "base.html" %}
 
+{% block title %}Edit File{% endblock %}
+
+
+{% block container %}
 <h1>Edit {{article.title}}</h1>
-<div style="width=45%; float: left">
+<div style="max-width: 40%; float: left">
     <form id="origin" method=POST>
-        <textarea row=30 col=80 form="origin" name="editarea">{{origin}}</textarea>
+        <textarea rows=30 cols=50 name="editarea" style="font-size: 10pt; font-family: Monaco">{{origin}}</textarea>
         <input type="submit" id="modify_origin" name="update" value="update">
     </form>
 </div>
-<div style="width=45%; float: right">
-    <div>
+<div style="width: 45%; float: right">
+    <div class="content">
     {{article.content | safe}}
     </div>
 </div>
+{% endblock %}
 
-</html>
